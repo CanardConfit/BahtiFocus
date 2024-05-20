@@ -2,8 +2,8 @@
   <PropertyGroup>
     <TargetFramework>net8.0-windows8.0</TargetFramework>
     <OutputType>Library</OutputType>
-    <RootNamespace>CanardConfit.NINA.Bahtifocus</RootNamespace>
-    <AssemblyName>CanardConfit.NINA.Bahtifocus</AssemblyName>
+    <RootNamespace>CanardConfit.NINA.BahtiFocus</RootNamespace>
+    <AssemblyName>CanardConfit.NINA.BahtiFocus</AssemblyName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWPF>true</UseWPF>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
@@ -24,6 +24,13 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="BahtiVisualImage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <XamlRuntime>Wpf</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <PropertyGroup />
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

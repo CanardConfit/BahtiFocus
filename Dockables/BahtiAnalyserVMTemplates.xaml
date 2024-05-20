@@ -1,0 +1,73 @@
+﻿<ResourceDictionary
+    x:Class="CanardConfit.NINA.BahtiFocus.Dockables.BahtiAnalyserVMTemplates"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ninactrl="clr-namespace:NINA.CustomControlLibrary;assembly=NINA.CustomControlLibrary">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="../Resources/BahtiAnalyserOptions.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <DataTemplate x:Key="CanardConfit.NINA.BahtiFocus.Dockables.BahtiAnalyserVM_Dockable">
+        <Grid Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="135" />
+            </Grid.ColumnDefinitions>
+
+            <Expander
+                VerticalAlignment="Center"
+                Header="Options"
+                IsExpanded="{Binding OptionsExpanded}">
+                <ContentPresenter Content="{Binding BahtiAnalyser}" ContentTemplate="{DynamicResource BahtiAnalyserSettings}" />
+            </Expander>
+            <Grid Grid.Column="1">
+                <ninactrl:AsyncProcessButton
+                    Width="135"
+                    Height="25"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    ButtonImage="{StaticResource PlaySVG}"
+                    CancelButtonImage="{StaticResource StopSVG}"
+                    CancelCommand="{Binding CancelExecuteCommand}"
+                    Command="{Binding ExecuteCommand}"
+                    IsPaused="{Binding BahtiAnalyser.IsPaused}"
+                    PauseButtonImage="{StaticResource PauseSVG}"
+                    PauseCommand="{Binding PauseCommand}"
+                    ResumeButtonImage="{StaticResource PlaySVG}"
+                    ResumeCommand="{Binding ResumeCommand}" />
+            </Grid>
+            <ItemsControl
+                Grid.Row="1"
+                Grid.ColumnSpan="2"
+                Margin="0,5,0,0"
+                ItemsSource="{Binding BahtiAnalyser.Issues}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            Background="{StaticResource NotificationErrorBrush}"
+                            Foreground="{StaticResource NotificationErrorTextBrush}"
+                            Text="{Binding}"
+                            TextAlignment="Center"
+                            TextWrapping="Wrap" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <Border
+                Grid.Row="2"
+                Grid.ColumnSpan="2"
+                Margin="0,5,0,0"
+                VerticalAlignment="Stretch"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="0,1,0,0">
+                <ContentPresenter Content="{Binding BahtiAnalyser}" />
+            </Border>
+        </Grid>
+    </DataTemplate>
+</ResourceDictionary>

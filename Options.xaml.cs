@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace CanardConfit.NINA.Bahtifocus {
+namespace CanardConfit.NINA.BahtiFocus {
     [Export(typeof(ResourceDictionary))]
     partial class Options : ResourceDictionary {
 
