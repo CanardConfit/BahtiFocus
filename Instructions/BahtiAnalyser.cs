@@ -142,8 +142,8 @@ namespace CanardConfit.NINA.BahtiFocus.Instructions {
                         
                         // TODO: Maybe wait a little between captures?
                         await CoreUtil.Wait(
-                            TimeSpan.FromSeconds(profileService.ActiveProfile.TelescopeSettings.SettleTime), token,
-                            progress, "Settling");
+                            TimeSpan.FromSeconds(2), token,
+                            progress, "Wait");
 
                     } while (!localCTS.IsCancellationRequested);
                 }
