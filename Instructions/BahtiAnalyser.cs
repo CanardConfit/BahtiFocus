@@ -18,35 +18,54 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Media.Imaging;
 
 namespace CanardConfit.NINA.BahtiFocus.Instructions {
     public class BahtiAnalyser: INotifyPropertyChanged {
-        private readonly IProfileService profileService;
-        private readonly ICameraMediator cameraMediator;
-        private readonly IImagingMediator imagingMediator;
-        private readonly IFilterWheelMediator fwMediator;
-        private PauseTokenSource pauseTS;
-        private bool isPaused;
-        private IRenderedImage image;
-        private ApplicationStatus status;
+        private readonly IProfileService _profileService;
+        private readonly ICameraMediator _cameraMediator;
+        private readonly IImagingMediator _imagingMediator;
+        private readonly IFilterWheelMediator _fwMediator;
+        private PauseTokenSource _pauseTs;
+        private bool _isPaused;
+        private IRenderedImage _image;
+        private BitmapSource _calcImage;
+        private ApplicationStatus _status;
         
-        private IList<string> issues = new List<string>();
-        private CameraInfo cameraInfo;
-        private FilterInfo filter;
-        private double exposureTime;
-        private int gain;
-        private int offset;
-        private BinningMode binning;
-        private double focalLength;
-        private double focalRatio;
-        private double pixelSize;
+        private IList<string> _issues = new List<string>();
+        private CameraInfo _cameraInfo;
+        private FilterInfo _filter;
+        private double _exposureTime;
+        private int _gain;
+        private int _offset;
+        private BinningMode _binning;
+        private double _focalLength;
+        private double _focalRatio;
+        private double _pixelSize;
+        private BahtinovGrabber.BahtinovGrabber.BahtinovCalc _bahtinovCalc;
+        private Rectangle _areaZone;
+
+        public struct Rectangle {
+            public int Left { get; }
+            public int Top { get; }
+            public int Width { get; }
+            public int Height { get; }
+
+            public Rectangle(int left, int top, int width, int height) {
+                Left = left;
+                Top = top;
+                Width = width;
+                Height = height;
+            }
+        }
         
         [ImportingConstructor]
         public BahtiAnalyser(IProfileService profileService, ICameraMediator cameraMediator, IImagingMediator imagingMediator, IFilterWheelMediator fwMediator) {
-            this.profileService = profileService;
-            this.cameraMediator = cameraMediator;
-            this.fwMediator = fwMediator;
-            this.imagingMediator = imagingMediator;
+            this._profileService = profileService;
+            this._cameraMediator = cameraMediator;
+            this._fwMediator = fwMediator;
+            this._imagingMediator = imagingMediator;
             
             Status = new ApplicationStatus();
             
@@ -59,7 +78,7 @@ namespace CanardConfit.NINA.BahtiFocus.Instructions {
             FocalLength = profileService.ActiveProfile.TelescopeSettings.FocalLength;
             FocalRatio = profileService.ActiveProfile.TelescopeSettings.FocalRatio;
             
-            CameraInfo = this.cameraMediator.GetInfo();
+            CameraInfo = this._cameraMediator.GetInfo();
         }
 
         public bool Validate() {
@@ -67,7 +86,7 @@ namespace CanardConfit.NINA.BahtiFocus.Instructions {
             var i = new List<string>();
 
             //Camera
-            CameraInfo = cameraMediator.GetInfo();
+            CameraInfo = _cameraMediator.GetInfo();
             if (!CameraInfo.Connected) {
                 i.Add(Loc.Instance["LblCameraNotConnected"]);
             } else {
@@ -80,7 +99,7 @@ namespace CanardConfit.NINA.BahtiFocus.Instructions {
             }
 
             //Filter wheel
-            if (filter != null && !fwMediator.GetInfo().Connected) {
+            if (_filter != null && !_fwMediator.GetInfo().Connected) {
                 i.Add(Loc.Instance["LblFilterWheelNotConnected"]);
                 i.Add("Either connect the filter wheel or clear the filter selection!");
             }
@@ -90,14 +109,14 @@ namespace CanardConfit.NINA.BahtiFocus.Instructions {
         }
 
         public void Pause() {
-            if (pauseTS != null) {
-                pauseTS.IsPaused = true;
+            if (_pauseTs != null) {
+                _pauseTs.IsPaused = true;
                 RaisePropertyChanged(nameof(IsPaused));
             }
         }
         public void Resume() {
-            if (pauseTS != null) {
-                pauseTS.IsPaused = false;
+            if (_pauseTs != null) {
+                _pauseTs.IsPaused = false;
                 RaisePropertyChanged(nameof(IsPaused));
             }
         }
@@ -111,7 +130,7 @@ namespace CanardConfit.NINA.BahtiFocus.Instructions {
                 
                 try {
                     progress.Report(new ApplicationStatus() { Status = $"Capturing new image to solve..." });
-                    image = await imagingMediator.CaptureAndPrepareImage(seq, new PrepareImageParameters(true, false), token, progress);
+                    image = await _imagingMediator.CaptureAndPrepareImage(seq, new PrepareImageParameters(true, false), token, progress);
                 } catch (Exception ex) { Logger.Error(ex); }
 
                 if (image == null) {
@@ -122,25 +141,85 @@ namespace CanardConfit.NINA.BahtiFocus.Instructions {
             return image;
         }
         
+        public static BitmapSource ResizeBitmap(BitmapSource source, int newWidth, int newHeight)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            // Créer une transformation de mise à l'échelle
+            var scaleTransform = new System.Windows.Media.ScaleTransform(
+                (double)newWidth / source.PixelWidth, 
+                (double)newHeight / source.PixelHeight);
+
+            // Appliquer la transformation à la source de l'image
+            var transformedBitmap = new TransformedBitmap(source, scaleTransform);
+
+            return transformedBitmap;
+        }
+        
+        public static BitmapSource GetCenterCrop(BitmapSource source, int width, int height)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            // Calculer la position de départ pour le recadrage
+            int x = (source.PixelWidth - width) / 2;
+            int y = (source.PixelHeight - height) / 2;
+
+            // Vérifier que les dimensions demandées ne dépassent pas l'image source
+            if (x < 0 || y < 0 || width > source.PixelWidth || height > source.PixelHeight)
+            {
+                throw new ArgumentException("Les dimensions demandées sont hors limites de l'image source.");
+            }
+
+            // Créer une zone de recadrage
+            var cropRect = new Int32Rect(x, y, width, height);
+
+            // Créer et retourner le bitmap recadré
+            var croppedBitmap = new CroppedBitmap(source, cropRect);
+            return croppedBitmap;
+        }
+        
         public async Task Execute(IProgress<ApplicationStatus> externalProgress, CancellationToken token) {
             try {
                 using (var localCTS = CancellationTokenSource.CreateLinkedTokenSource(token)) {
-                    pauseTS = new PauseTokenSource();
+                    _pauseTs = new PauseTokenSource();
                     IProgress<ApplicationStatus> progress = new Progress<ApplicationStatus>(p => {
                         externalProgress?.Report(p);
                     });
 
-                    //TODO: add initializations here
-
+                    float[] bahtinovAngles = new float[3];
+                    
                     do {
                         await WaitIfPaused(localCTS.Token, progress);
 
                         IRenderedImage image = await CaptureImage(progress, localCTS.Token);
                         Image = image;
 
-                        // TODO: Compute bahtinov mask values to draw on canvas in BahtiVisualImage.xaml
+                        double diameter = FocalLength / FocalRatio;
+
+                        BitmapSource calcImage = ResizeBitmap(image.Image, Convert.ToInt32(image.Image.Width / 2), Convert.ToInt32(image.Image.Height / 2));
+
+                        calcImage = GetCenterCrop(calcImage, 800, 800);
+
+                        int realWith = calcImage.PixelWidth * 2;
+                        int realHeight = calcImage.PixelHeight * 2;
                         
-                        // TODO: Maybe wait a little between captures?
+                        // TODO: Check si le rectangle est correct car me parrait très grand / dézoomé
+                        AreaZone = new Rectangle((image.Image.PixelWidth - realWith) / 2, (image.Image.PixelHeight - realHeight) / 2, realWith, realHeight);
+                        
+                        CalcImage = calcImage;
+                        
+                        BahtinovGrabber.BahtinovGrabber.BahtinovCalc calc =
+                            BahtinovGrabber.BahtinovGrabber.CalculateLines(calcImage, ref bahtinovAngles, diameter, FocalLength, PixelSize);
+
+                        BahtinovCalc = calc;
+                        
+                        // TODO: Maybe wait a little between captures? Maybe in parameters
                         await CoreUtil.Wait(
                             TimeSpan.FromSeconds(2), token,
                             progress, "Wait");
@@ -161,7 +240,7 @@ namespace CanardConfit.NINA.BahtiFocus.Instructions {
             if (IsPausing) {
                 IsPaused = true;
                 progress?.Report(GetStatus("Paused"));
-                await pauseTS.Token.WaitWhilePausedAsync(token);
+                await _pauseTs.Token.WaitWhilePausedAsync(token);
                 progress?.Report(GetStatus(string.Empty));
                 IsPaused = false;
             }
@@ -171,37 +250,43 @@ namespace CanardConfit.NINA.BahtiFocus.Instructions {
             return new ApplicationStatus { Source = "BHTA", Status = stat };
         }
         
-        public ApplicationStatus Status { get => status; set { status = value; RaisePropertyChanged(); } }
+        public ApplicationStatus Status { get => _status; set { _status = value; RaisePropertyChanged(); } }
 
-        public IRenderedImage Image { get => image; set { image = value; RaisePropertyChanged(); } }
+        public IRenderedImage Image { get => _image; set { _image = value; RaisePropertyChanged(); } }
         
-        public bool IsPausing { get => pauseTS?.IsPaused ?? false; }
+        public bool IsPausing { get => _pauseTs?.IsPaused ?? false; }
         
-        public bool IsPaused { get => isPaused; private set { isPaused = value; RaisePropertyChanged(); } }
+        public bool IsPaused { get => _isPaused; private set { _isPaused = value; RaisePropertyChanged(); } }
 
-        public IList<string> Issues { get => issues; set { issues = value; RaisePropertyChanged(); }}
+        public IList<string> Issues { get => _issues; set { _issues = value; RaisePropertyChanged(); }}
 
-        public CameraInfo CameraInfo { get => cameraInfo; private set { cameraInfo = value; RaisePropertyChanged(); } }
+        public CameraInfo CameraInfo { get => _cameraInfo; private set { _cameraInfo = value; RaisePropertyChanged(); } }
         
-        public FilterInfo Filter { get => filter; set { filter = value; RaisePropertyChanged(); } }
+        public FilterInfo Filter { get => _filter; set { _filter = value; RaisePropertyChanged(); } }
 
-        public double ExposureTime { get => exposureTime; set { exposureTime = value; RaisePropertyChanged(); } }
+        public double ExposureTime { get => _exposureTime; set { _exposureTime = value; RaisePropertyChanged(); } }
 
-        public int Gain { get => gain; set { gain = value; RaisePropertyChanged(); } }
+        public int Gain { get => _gain; set { _gain = value; RaisePropertyChanged(); } }
 
-        public int Offset { get => offset; set { offset = value; RaisePropertyChanged(); } }
+        public int Offset { get => _offset; set { _offset = value; RaisePropertyChanged(); } }
 
-        public BinningMode Binning { get => binning; set { binning = value; RaisePropertyChanged(); } }
+        public BinningMode Binning { get => _binning; set { _binning = value; RaisePropertyChanged(); } }
 
-        public double FocalLength { get => focalLength; set { focalLength = value; RaisePropertyChanged(); } }
+        public double FocalLength { get => _focalLength; set { _focalLength = value; RaisePropertyChanged(); } }
 
-        public double FocalRatio { get => focalRatio; set { focalRatio = value; RaisePropertyChanged(); } }
+        public double FocalRatio { get => _focalRatio; set { _focalRatio = value; RaisePropertyChanged(); } }
 
-        public double PixelSize { get => pixelSize; set { pixelSize = value; RaisePropertyChanged(); } }
+        public double PixelSize { get => _pixelSize; set { _pixelSize = value; RaisePropertyChanged(); } }
+
+        public BahtinovGrabber.BahtinovGrabber.BahtinovCalc BahtinovCalc { get => _bahtinovCalc; set { _bahtinovCalc = value; RaisePropertyChanged(); } }
+
+        public BitmapSource CalcImage { get => _calcImage; set { _calcImage = value; RaisePropertyChanged(); } }
+
+        public Rectangle AreaZone { get => _areaZone; set { _areaZone = value; RaisePropertyChanged(); } }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void RaisePropertyChanged([CallerMemberName] string propertyName = null) {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

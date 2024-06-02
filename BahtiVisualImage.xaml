@@ -146,6 +146,65 @@
                         </Grid>
                     </Grid>
                 </Border>
+                <Border
+                    x:Name="PART_MiniBorder"
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Grid.ColumnSpan="2"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="0,0,0,1">
+                    <Grid>
+                        <Viewbox Stretch="Uniform">
+                            <Canvas
+                                Width="{Binding ActualWidth, ElementName=PART_MiniImage}"
+                                Height="{Binding ActualHeight, ElementName=PART_MiniImage}"
+                                behavior:MouseCommandBehavior.Enabled="True"
+                                ClipToBounds="True">
+                                <Canvas.Background>
+                                    <VisualBrush>
+                                        <VisualBrush.Visual>
+                                            <Image
+                                                x:Name="PART_MiniImage"
+                                                RenderOptions.BitmapScalingMode="HighQuality"
+                                                Source="{Binding CalcImage}"
+                                                Stretch="Uniform" />
+                                        </VisualBrush.Visual>
+                                    </VisualBrush>
+                                </Canvas.Background>
+
+                                <!--  TODO: DRAW HERE  -->
+                                
+                                <!-- Line Right -->
+                                <Line
+                                    Stroke="Green"
+                                    StrokeThickness="2"
+                                    X1="{Binding BahtinovCalc.LineRight.P1.X}"
+                                    X2="{Binding BahtinovCalc.LineRight.P2.X}"
+                                    Y1="{Binding BahtinovCalc.LineRight.P1.Y}"
+                                    Y2="{Binding BahtinovCalc.LineRight.P2.Y}" />
+                                
+                                <!-- Line Middle -->
+                                <Line
+                                    Stroke="Yellow"
+                                    StrokeThickness="2"
+                                    X1="{Binding BahtinovCalc.LineMiddle.P1.X}"
+                                    X2="{Binding BahtinovCalc.LineMiddle.P2.X}"
+                                    Y1="{Binding BahtinovCalc.LineMiddle.P1.Y}"
+                                    Y2="{Binding BahtinovCalc.LineMiddle.P2.Y}" />
+                                
+                                <!-- Line Left -->
+                                <Line
+                                    Stroke="Red"
+                                    StrokeThickness="2"
+                                    X1="{Binding BahtinovCalc.LineLeft.P1.X}"
+                                    X2="{Binding BahtinovCalc.LineLeft.P2.X}"
+                                    Y1="{Binding BahtinovCalc.LineLeft.P1.Y}"
+                                    Y2="{Binding BahtinovCalc.LineLeft.P2.Y}" />
+                                
+                            </Canvas>
+                        </Viewbox>
+                    </Grid>
+                </Border>
             </Grid>
 
             <Border
@@ -183,8 +242,17 @@
                                     </VisualBrush.Visual>
                                 </VisualBrush>
                             </Canvas.Background>
-
-                            <!--  TODO: DRAW HERE  -->
+                            
+                            <Rectangle
+                                Canvas.Left="{Binding AreaZone.Left}"
+                                Canvas.Top="{Binding AreaZone.Top}"
+                                Width="{Binding AreaZone.Width}"
+                                Height="{Binding AreaZone.Height}"
+                                Fill="Transparent" 
+                                Stroke="LightGreen" 
+                                StrokeThickness="8"
+                                StrokeDashArray="4 4"
+                            />
                             
                         </Canvas>
                     </Viewbox>
