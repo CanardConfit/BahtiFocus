@@ -5,7 +5,7 @@
     xmlns:behavior="clr-namespace:NINA.WPF.Base.Behaviors;assembly=NINA.WPF.Base"
     xmlns:coreconverters="clr-namespace:NINA.Core.Utility.Converters;assembly=NINA.Core"
     xmlns:instructions="clr-namespace:CanardConfit.NINA.BahtiFocus.Instructions"
-    xmlns:customControlLibrary="clr-namespace:NINA.CustomControlLibrary;assembly=NINA.CustomControlLibrary">
+    xmlns:b="http://schemas.microsoft.com/xaml/behaviors">
     <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     <coreconverters:BooleanToVisibilityHiddenConverter x:Key="BooleanToVisibilityHiddenConverter" />
     
@@ -58,7 +58,6 @@
     <DataTemplate DataType="{x:Type instructions:BahtiAnalyser}">
         <Grid Margin="5">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition />
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
@@ -148,13 +147,77 @@
                 </Border>
                 <Border
                     x:Name="PART_MiniBorder"
-                    Grid.Row="2"
-                    Grid.Column="1"
-                    Grid.ColumnSpan="2"
+                    Grid.Row="1"
+                    Grid.Column="0"
                     BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="0,0,0,1">
                     <Grid>
-                        <Viewbox Stretch="Uniform">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        
+                        <!-- Options Panel -->
+                        <StackPanel Orientation="Vertical" Grid.Row="0" Margin="0,10,10,10">
+                            <!-- Zoom Option -->
+                            <TextBlock Text="Zoom:" HorizontalAlignment="Center" Margin="0,0,5,0"/>
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="20*" />
+                                    <ColumnDefinition Width="60*" />
+                                    <ColumnDefinition Width="20*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox Text="{Binding Zoom, Mode=TwoWay}" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+                                <Slider Minimum="50" Maximum="800" ClipToBounds="True" Value="{Binding Zoom}" Grid.Column="1" HorizontalAlignment="Stretch">
+                                    <b:Interaction.Triggers>
+                                        <b:EventTrigger EventName="ValueChanged">
+                                            <b:InvokeCommandAction Command="{Binding SliderValueChanged}" />
+                                        </b:EventTrigger>
+                                    </b:Interaction.Triggers>
+                                </Slider>
+                                <Button Content="Reset" Command="{Binding ResetZoomCommand}" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                            </Grid>
+
+                            <!-- X Offset Option -->
+                            <TextBlock Text="X Offset:" HorizontalAlignment="Center" Margin="10,0,5,0"/>
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="20*" />
+                                    <ColumnDefinition Width="60*" />
+                                    <ColumnDefinition Width="20*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox Text="{Binding XOffset, Mode=TwoWay}" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+                                <Slider Minimum="-1000" Maximum="1000" ClipToBounds="True" Value="{Binding XOffset}" Grid.Column="1" HorizontalAlignment="Stretch">
+                                    <b:Interaction.Triggers>
+                                        <b:EventTrigger EventName="ValueChanged">
+                                            <b:InvokeCommandAction Command="{Binding SliderValueChanged}" />
+                                        </b:EventTrigger>
+                                    </b:Interaction.Triggers>
+                                </Slider>
+                                <Button Content="Reset" Command="{Binding ResetXOffsetCommand}" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                            </Grid>
+
+                            <!-- Y Offset Option -->
+                            <TextBlock Text="Y Offset:" HorizontalAlignment="Center" Margin="10,0,5,0"/>
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="20*" />
+                                    <ColumnDefinition Width="60*" />
+                                    <ColumnDefinition Width="20*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox Text="{Binding YOffset, Mode=TwoWay}" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+                                <Slider Minimum="-1000" Maximum="1000" ClipToBounds="True" Value="{Binding YOffset}" Grid.Column="1" HorizontalAlignment="Stretch">
+                                    <b:Interaction.Triggers>
+                                        <b:EventTrigger EventName="ValueChanged">
+                                            <b:InvokeCommandAction Command="{Binding SliderValueChanged}" />
+                                        </b:EventTrigger>
+                                    </b:Interaction.Triggers>
+                                </Slider>
+                                <Button Content="Reset" Command="{Binding ResetYOffsetCommand}" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                            </Grid>
+                        </StackPanel>
+                        
+                        <Viewbox Stretch="Uniform" Grid.Row="1">
                             <Canvas
                                 Width="{Binding ActualWidth, ElementName=PART_MiniImage}"
                                 Height="{Binding ActualHeight, ElementName=PART_MiniImage}"
@@ -166,7 +229,7 @@
                                             <Image
                                                 x:Name="PART_MiniImage"
                                                 RenderOptions.BitmapScalingMode="HighQuality"
-                                                Source="{Binding CalcImage}"
+                                                Source="{Binding AnalysedImage}"
                                                 Stretch="Uniform" />
                                         </VisualBrush.Visual>
                                     </VisualBrush>
@@ -237,7 +300,7 @@
                                         <Image
                                             x:Name="PART_Image"
                                             RenderOptions.BitmapScalingMode="HighQuality"
-                                            Source="{Binding Image.Image}"
+                                            Source="{Binding CalcImage}"
                                             Stretch="Uniform" />
                                     </VisualBrush.Visual>
                                 </VisualBrush>
@@ -248,27 +311,13 @@
                                 Canvas.Top="{Binding AreaZone.Top}"
                                 Width="{Binding AreaZone.Width}"
                                 Height="{Binding AreaZone.Height}"
-                                Fill="Transparent" 
-                                Stroke="LightGreen" 
+                                Fill="Transparent"
+                                Stroke="LightGreen"
                                 StrokeThickness="8"
                                 StrokeDashArray="4 4"
                             />
                             
                         </Canvas>
-                    </Viewbox>
-                </Grid>
-            </Border>
-            
-            <Border
-                x:Name="PART_Informations"
-                Grid.Row="2"
-                Grid.Column="1"
-                Grid.ColumnSpan="2"
-                BorderBrush="{DynamicResource BorderBrush}"
-                BorderThickness="0,0,0,1">
-                <Grid>
-                    <Viewbox Stretch="Uniform">
-                        <!-- TODO: Put informations about focus here-->
                     </Viewbox>
                 </Grid>
             </Border>

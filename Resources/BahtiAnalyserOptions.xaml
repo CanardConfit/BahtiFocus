@@ -238,6 +238,7 @@
                     VerticalAlignment="Center"
                     Text="{Binding PixelSize}"
                     TextAlignment="Right" />
+
             </WrapPanel>
         </StackPanel>
     </DataTemplate>
