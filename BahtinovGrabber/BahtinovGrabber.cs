@@ -131,8 +131,8 @@ namespace CanardConfit.NINA.BahtiFocus.BahtinovGrabber {
                 {
                     var pixelIndex = (x + y * width) * stride / width;
                     pixelIntensityArray[x, y] = (float)((double)pixelArray[pixelIndex] +
-                                                        (double)pixelArray[pixelIndex + 1] +
-                                                        (double)pixelArray[pixelIndex + 2]);
+                                                        pixelArray[pixelIndex + 1] +
+                                                        pixelArray[pixelIndex + 2]);
                     pixelIntensityArray[x, y] /= 3f;
                     pixelIntensityArray[x, y] /= byte.MaxValue;
                     pixelIntensityArray[x, y] = (float)Math.Sqrt(pixelIntensityArray[x, y]);

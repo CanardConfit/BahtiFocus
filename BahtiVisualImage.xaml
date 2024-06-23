@@ -153,71 +153,11 @@
                     BorderThickness="0,0,0,1">
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         
-                        <!-- Options Panel -->
-                        <StackPanel Orientation="Vertical" Grid.Row="0" Margin="0,10,10,10">
-                            <!-- Zoom Option -->
-                            <TextBlock Text="Zoom:" HorizontalAlignment="Center" Margin="0,0,5,0"/>
-                            <Grid Margin="0,0,0,10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="20*" />
-                                    <ColumnDefinition Width="60*" />
-                                    <ColumnDefinition Width="20*" />
-                                </Grid.ColumnDefinitions>
-                                <TextBox Text="{Binding Zoom, Mode=TwoWay}" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
-                                <Slider Minimum="50" Maximum="800" ClipToBounds="True" Value="{Binding Zoom}" Grid.Column="1" HorizontalAlignment="Stretch">
-                                    <b:Interaction.Triggers>
-                                        <b:EventTrigger EventName="ValueChanged">
-                                            <b:InvokeCommandAction Command="{Binding SliderValueChanged}" />
-                                        </b:EventTrigger>
-                                    </b:Interaction.Triggers>
-                                </Slider>
-                                <Button Content="Reset" Command="{Binding ResetZoomCommand}" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
-                            </Grid>
-
-                            <!-- X Offset Option -->
-                            <TextBlock Text="X Offset:" HorizontalAlignment="Center" Margin="10,0,5,0"/>
-                            <Grid Margin="0,0,0,10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="20*" />
-                                    <ColumnDefinition Width="60*" />
-                                    <ColumnDefinition Width="20*" />
-                                </Grid.ColumnDefinitions>
-                                <TextBox Text="{Binding XOffset, Mode=TwoWay}" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
-                                <Slider Minimum="-1000" Maximum="1000" ClipToBounds="True" Value="{Binding XOffset}" Grid.Column="1" HorizontalAlignment="Stretch">
-                                    <b:Interaction.Triggers>
-                                        <b:EventTrigger EventName="ValueChanged">
-                                            <b:InvokeCommandAction Command="{Binding SliderValueChanged}" />
-                                        </b:EventTrigger>
-                                    </b:Interaction.Triggers>
-                                </Slider>
-                                <Button Content="Reset" Command="{Binding ResetXOffsetCommand}" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
-                            </Grid>
-
-                            <!-- Y Offset Option -->
-                            <TextBlock Text="Y Offset:" HorizontalAlignment="Center" Margin="10,0,5,0"/>
-                            <Grid Margin="0,0,0,10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="20*" />
-                                    <ColumnDefinition Width="60*" />
-                                    <ColumnDefinition Width="20*" />
-                                </Grid.ColumnDefinitions>
-                                <TextBox Text="{Binding YOffset, Mode=TwoWay}" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
-                                <Slider Minimum="-1000" Maximum="1000" ClipToBounds="True" Value="{Binding YOffset}" Grid.Column="1" HorizontalAlignment="Stretch">
-                                    <b:Interaction.Triggers>
-                                        <b:EventTrigger EventName="ValueChanged">
-                                            <b:InvokeCommandAction Command="{Binding SliderValueChanged}" />
-                                        </b:EventTrigger>
-                                    </b:Interaction.Triggers>
-                                </Slider>
-                                <Button Content="Reset" Command="{Binding ResetYOffsetCommand}" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
-                            </Grid>
-                        </StackPanel>
-                        
-                        <Viewbox Stretch="Uniform" Grid.Row="1">
+                        <Viewbox Stretch="Uniform" Grid.Row="0" Margin="0, 10, 10, 10">
                             <Canvas
                                 Width="{Binding ActualWidth, ElementName=PART_MiniImage}"
                                 Height="{Binding ActualHeight, ElementName=PART_MiniImage}"
@@ -234,17 +174,16 @@
                                         </VisualBrush.Visual>
                                     </VisualBrush>
                                 </Canvas.Background>
-
-                                <!--  TODO: DRAW HERE  -->
                                 
                                 <!-- Line Right -->
                                 <Line
-                                    Stroke="Green"
+                                    Stroke="Red"
                                     StrokeThickness="2"
                                     X1="{Binding BahtinovCalc.LineRight.P1.X}"
                                     X2="{Binding BahtinovCalc.LineRight.P2.X}"
                                     Y1="{Binding BahtinovCalc.LineRight.P1.Y}"
-                                    Y2="{Binding BahtinovCalc.LineRight.P2.Y}" />
+                                    Y2="{Binding BahtinovCalc.LineRight.P2.Y}"
+                                    StrokeDashArray="4 1" />
                                 
                                 <!-- Line Middle -->
                                 <Line
@@ -253,19 +192,161 @@
                                     X1="{Binding BahtinovCalc.LineMiddle.P1.X}"
                                     X2="{Binding BahtinovCalc.LineMiddle.P2.X}"
                                     Y1="{Binding BahtinovCalc.LineMiddle.P1.Y}"
-                                    Y2="{Binding BahtinovCalc.LineMiddle.P2.Y}" />
+                                    Y2="{Binding BahtinovCalc.LineMiddle.P2.Y}"
+                                    StrokeDashArray="4 1" />
                                 
                                 <!-- Line Left -->
                                 <Line
-                                    Stroke="Red"
+                                    Stroke="Green"
                                     StrokeThickness="2"
                                     X1="{Binding BahtinovCalc.LineLeft.P1.X}"
                                     X2="{Binding BahtinovCalc.LineLeft.P2.X}"
                                     Y1="{Binding BahtinovCalc.LineLeft.P1.Y}"
-                                    Y2="{Binding BahtinovCalc.LineLeft.P2.Y}" />
+                                    Y2="{Binding BahtinovCalc.LineLeft.P2.Y}"
+                                    StrokeDashArray="4 1" />
+                                
+                                <!-- Intersection of lines -->
+                                <Ellipse
+                                    Stroke="Blue"
+                                    StrokeThickness="2"
+                                    Canvas.Left="{Binding BahtinovCalc.EllipseIntersection.Start.X}"
+                                    Canvas.Top="{Binding BahtinovCalc.EllipseIntersection.Start.Y}"
+                                    Width="{Binding BahtinovCalc.EllipseIntersection.Width}"
+                                    Height="{Binding BahtinovCalc.EllipseIntersection.Height}"
+                                    StrokeDashArray="4 1" />
+                                
+                                <!-- Projection errors -->
+                                <Ellipse
+                                    Stroke="Red"
+                                    StrokeThickness="2"
+                                    Canvas.Left="{Binding BahtinovCalc.EllipseError.Start.X}"
+                                    Canvas.Top="{Binding BahtinovCalc.EllipseError.Start.Y}"
+                                    Width="{Binding BahtinovCalc.EllipseError.Width}"
+                                    Height="{Binding BahtinovCalc.EllipseError.Height}"
+                                    StrokeDashArray="4 1" />
+                                <Line
+                                    Stroke="Red"
+                                    StrokeThickness="2"
+                                    X1="{Binding BahtinovCalc.LineError.P1.X}"
+                                    X2="{Binding BahtinovCalc.LineError.P2.X}"
+                                    Y1="{Binding BahtinovCalc.LineError.P1.Y}"
+                                    Y2="{Binding BahtinovCalc.LineError.P2.Y}"
+                                    StrokeDashArray="4 1" />
+                                
+                                <!-- Critical Focus Ellipses -->
+                                <Ellipse
+                                    Stroke="Yellow"
+                                    StrokeThickness="2"
+                                    Canvas.Left="{Binding BahtinovCalc.EllipseCritFocus[0].Start.X}"
+                                    Canvas.Top="{Binding BahtinovCalc.EllipseCritFocus[0].Start.Y}"
+                                    Width="{Binding BahtinovCalc.EllipseCritFocus[0].Width}"
+                                    Height="{Binding BahtinovCalc.EllipseCritFocus[0].Height}"
+                                    StrokeDashArray="4 1" />
+                                <Ellipse
+                                    Stroke="Yellow"
+                                    StrokeThickness="2"
+                                    Canvas.Left="{Binding BahtinovCalc.EllipseCritFocus[1].Start.X}"
+                                    Canvas.Top="{Binding BahtinovCalc.EllipseCritFocus[1].Start.Y}"
+                                    Width="{Binding BahtinovCalc.EllipseCritFocus[1].Width}"
+                                    Height="{Binding BahtinovCalc.EllipseCritFocus[1].Height}"
+                                    StrokeDashArray="4 1" />
+                                <Ellipse
+                                    Stroke="Yellow"
+                                    StrokeThickness="2"
+                                    Canvas.Left="{Binding BahtinovCalc.EllipseCritFocus[2].Start.X}"
+                                    Canvas.Top="{Binding BahtinovCalc.EllipseCritFocus[2].Start.Y}"
+                                    Width="{Binding BahtinovCalc.EllipseCritFocus[2].Width}"
+                                    Height="{Binding BahtinovCalc.EllipseCritFocus[2].Height}"
+                                    StrokeDashArray="4 1" />
                                 
                             </Canvas>
                         </Viewbox>
+                        
+                        <!-- Bahtinov Information -->
+                        <Border
+                            Grid.Row="1"
+                            BorderBrush="{DynamicResource BorderBrush}"
+                            BorderThickness="0,1,0,0">
+                            <UniformGrid VerticalAlignment="Bottom" Margin="10,10,0,10">
+                                <StackPanel HorizontalAlignment="Center">
+                                    <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0">
+                                        <UniformGrid Columns="1">
+                                            <UniformGrid
+                                                Margin="0,6,0,6"
+                                                VerticalAlignment="Center"
+                                                Columns="2">
+                                                <TextBlock Text="Focus Error" />
+                                                <TextBlock
+                                                    Margin="10,0,0,0"
+                                                    Text="{Binding BahtinovCalc.FocusError, StringFormat='{}{0:F2} pixels'}"
+                                                    TextWrapping="WrapWithOverflow" />
+                                            </UniformGrid>
+                                        </UniformGrid>
+                                    </Border>
+                                    <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0">
+                                        <UniformGrid Columns="1">
+                                            <UniformGrid
+                                                Margin="0,6,0,6"
+                                                VerticalAlignment="Center"
+                                                Columns="2">
+                                                <TextBlock Text="Absolute Focus Error" />
+                                                <TextBlock
+                                                    Margin="10,0,0,0"
+                                                    Text="{Binding BahtinovCalc.AbsoluteFocusError, StringFormat='{}{0:F2} microns'}"
+                                                    TextWrapping="WrapWithOverflow" />
+                                            </UniformGrid>
+                                        </UniformGrid>
+                                    </Border>
+                                    <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0">
+                                        <UniformGrid Columns="1">
+                                            <UniformGrid
+                                                Margin="0,6,0,6"
+                                                VerticalAlignment="Center"
+                                                Columns="2">
+                                                <TextBlock Text="Critical Focus" />
+                                                <TextBlock
+                                                    Margin="10,0,0,0"
+                                                    Text="{Binding BahtinovCalc.CriticalFocus}"
+                                                    TextWrapping="WrapWithOverflow" />
+                                            </UniformGrid>
+                                        </UniformGrid>
+                                    </Border>
+                                    <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0">
+                                        <UniformGrid Columns="1">
+                                            <UniformGrid
+                                                Margin="0,6,0,6"
+                                                VerticalAlignment="Center"
+                                                Columns="2">
+                                                <TextBlock Text="Mask Angle" />
+                                                <TextBlock
+                                                    Margin="10,0,0,0"
+                                                    Text="{Binding BahtinovCalc.MaskAngle, StringFormat='{}{0:F2} degrees'}"
+                                                    TextWrapping="WrapWithOverflow" />
+                                            </UniformGrid>
+                                        </UniformGrid>
+                                    </Border>
+                                    <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0">
+                                        <UniformGrid Columns="1">
+                                            <UniformGrid
+                                                Margin="0,6,0,6"
+                                                VerticalAlignment="Center"
+                                                Columns="2">
+                                                <TextBlock Text="Line Angles (degrees)" />
+                                                <TextBlock Margin="10,0,0,0" TextWrapping="WrapWithOverflow">
+                                                    <TextBlock.Text>
+                                                        <MultiBinding StringFormat="{}{0:F2} {1:F2} {2:F2}">
+                                                            <Binding Path="BahtinovCalc.Angles1" />
+                                                            <Binding Path="BahtinovCalc.Angles2" />
+                                                            <Binding Path="BahtinovCalc.Angles3" />
+                                                        </MultiBinding>
+                                                    </TextBlock.Text>
+                                                </TextBlock>
+                                            </UniformGrid>
+                                        </UniformGrid>
+                                    </Border>
+                                </StackPanel>
+                            </UniformGrid>
+                        </Border>
                     </Grid>
                 </Border>
             </Grid>
@@ -274,10 +355,13 @@
                 x:Name="PART_Border"
                 Grid.Row="0"
                 Grid.Column="1"
-                Grid.ColumnSpan="2"
                 BorderBrush="{DynamicResource BorderBrush}"
                 BorderThickness="1,0,0,1">
                 <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
                     <Path
                         Width="100"
                         Height="100"
@@ -288,7 +372,7 @@
                         Fill="{DynamicResource ButtonForegroundDisabledBrush}"
                         Opacity="0.4"
                         Stretch="Uniform" />
-                    <Viewbox Stretch="Uniform">
+                    <Viewbox Grid.Row="0" Stretch="Uniform" Margin="10, 10, 0, 10">
                         <Canvas
                             Width="{Binding ActualWidth, ElementName=PART_Image}"
                             Height="{Binding ActualHeight, ElementName=PART_Image}"
@@ -314,11 +398,77 @@
                                 Fill="Transparent"
                                 Stroke="LightGreen"
                                 StrokeThickness="8"
-                                StrokeDashArray="4 4"
+                                StrokeDashArray="4 1"
                             />
                             
                         </Canvas>
                     </Viewbox>
+                    <!-- Options Panel -->
+                    <Border
+                        Grid.Row="1"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="0,1,0,0">
+                        <UniformGrid VerticalAlignment="Bottom" Margin="10,10,0,10">
+                            <StackPanel Orientation="Vertical" IsEnabled="{Binding IsCalcImageAvailable}">
+                                <!-- Zoom Option -->
+                                <TextBlock Text="Zoom:" HorizontalAlignment="Center" Margin="0,0,5,0"/>
+                                <Grid Margin="0,0,0,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="20*" />
+                                        <ColumnDefinition Width="60*" />
+                                        <ColumnDefinition Width="20*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Text="{Binding Zoom, Mode=TwoWay}" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+                                    <Slider Minimum="50" Maximum="800" Value="{Binding Zoom}" Grid.Column="1" HorizontalAlignment="Stretch">
+                                        <b:Interaction.Triggers>
+                                            <b:EventTrigger EventName="ValueChanged">
+                                                <b:InvokeCommandAction Command="{Binding SliderValueChanged}" />
+                                            </b:EventTrigger>
+                                        </b:Interaction.Triggers>
+                                    </Slider>
+                                    <Button Content="Reset" Command="{Binding ResetZoomCommand}" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                                </Grid>
+
+                                <!-- X Offset Option -->
+                                <TextBlock Text="X Offset:" HorizontalAlignment="Center" Margin="10,0,5,0"/>
+                                <Grid Margin="0,0,0,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="20*" />
+                                        <ColumnDefinition Width="60*" />
+                                        <ColumnDefinition Width="20*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Text="{Binding XOffset, Mode=TwoWay}" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+                                    <Slider Minimum="-1000" Maximum="1000" Value="{Binding XOffset}" Grid.Column="1" HorizontalAlignment="Stretch">
+                                        <b:Interaction.Triggers>
+                                            <b:EventTrigger EventName="ValueChanged">
+                                                <b:InvokeCommandAction Command="{Binding SliderValueChanged}" />
+                                            </b:EventTrigger>
+                                        </b:Interaction.Triggers>
+                                    </Slider>
+                                    <Button Content="Reset" Command="{Binding ResetXOffsetCommand}" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                                </Grid>
+
+                                <!-- Y Offset Option -->
+                                <TextBlock Text="Y Offset:" HorizontalAlignment="Center" Margin="10,0,5,0"/>
+                                <Grid Margin="0,0,0,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="20*" />
+                                        <ColumnDefinition Width="60*" />
+                                        <ColumnDefinition Width="20*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Text="{Binding YOffset, Mode=TwoWay}" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+                                    <Slider Minimum="-1000" Maximum="1000" Value="{Binding YOffset}" Grid.Column="1" HorizontalAlignment="Stretch">
+                                        <b:Interaction.Triggers>
+                                            <b:EventTrigger EventName="ValueChanged">
+                                                <b:InvokeCommandAction Command="{Binding SliderValueChanged}" />
+                                            </b:EventTrigger>
+                                        </b:Interaction.Triggers>
+                                    </Slider>
+                                    <Button Content="Reset" Command="{Binding ResetYOffsetCommand}" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                                </Grid>
+                            </StackPanel>
+                        </UniformGrid>
+                    </Border>
                 </Grid>
             </Border>
         </Grid>

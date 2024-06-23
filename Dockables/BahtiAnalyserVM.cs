@@ -1,4 +1,5 @@
 ﻿using CanardConfit.NINA.BahtiFocus.Instructions;
+using CommunityToolkit.Mvvm.Input;
 using NINA.Core.Model;
 using NINA.Core.Utility;
 using NINA.Core.Utility.Notification;
@@ -35,22 +36,22 @@ namespace CanardConfit.NINA.BahtiFocus.Dockables {
             
             var dict = new ResourceDictionary();
             dict.Source = new Uri("CanardConfit.NINA.BahtiFocus;component/BahtiVisualImage.xaml", UriKind.RelativeOrAbsolute);
-            ImageGeometry = (System.Windows.Media.GeometryGroup) dict["BahtinovSvg"];
+            ImageGeometry = ((System.Windows.Media.GeometryGroup) dict["BahtinovSvg"])!;
             ImageGeometry.Freeze();
 
             BahtiAnalyser = new BahtiAnalyser(profileService, cameraMediator, imagingMediator, fwMediator);
             
-            ExecuteCommand = new AsyncCommand<bool>(
-                async () => { 
-                    using (executeCTS = new CancellationTokenSource()) {
-                        return await Execute(new Progress<ApplicationStatus>(p => Status = p), executeCTS.Token); 
-                    }
-                },
-                _ => BahtiAnalyser.Validate() && cameraMediator.IsFreeToCapture(this));
+            ExecuteCommand = new AsyncRelayCommand(Execute);
             
             CancelExecuteCommand = new CommunityToolkit.Mvvm.Input.RelayCommand(() => { try { executeCTS?.Cancel(); } catch (Exception) { } });
             PauseCommand = new CommunityToolkit.Mvvm.Input.RelayCommand(Pause, () => !BahtiAnalyser.IsPausing);
             ResumeCommand = new CommunityToolkit.Mvvm.Input.RelayCommand(Resume);
+        }
+
+        private async Task<bool> Execute() {
+            using (executeCTS = new CancellationTokenSource()) {
+                return await Execute(new Progress<ApplicationStatus>(p => Status = p), executeCTS.Token);
+            }
         }
         
         private ApplicationStatus GetStatus(string stat) {
@@ -100,7 +101,7 @@ namespace CanardConfit.NINA.BahtiFocus.Dockables {
             }
         }
 
-        public IAsyncCommand ExecuteCommand { get; }
+        public IAsyncRelayCommand ExecuteCommand { get; }
         
         public ICommand CancelExecuteCommand { get; }
         

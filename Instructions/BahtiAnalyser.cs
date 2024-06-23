@@ -86,6 +86,15 @@ namespace CanardConfit.NINA.BahtiFocus.Instructions {
             SliderValueChanged = new CommunityToolkit.Mvvm.Input.RelayCommand(UpdateArea);
             
             CameraInfo = _cameraMediator.GetInfo();
+
+            BahtinovCalc = new BahtinovGrabber.BahtinovGrabber.BahtinovCalc();
+            BahtinovCalc.Angles1 = 0;
+            BahtinovCalc.Angles2 = 0;
+            BahtinovCalc.Angles3 = 0;
+            BahtinovCalc.MaskAngle = 0;
+            BahtinovCalc.AbsoluteFocusError = 0;
+            BahtinovCalc.CriticalFocusThreshold = 0;
+            BahtinovCalc.FocusError = 0;
         }
 
         private void UpdateArea() {
@@ -271,7 +280,7 @@ namespace CanardConfit.NINA.BahtiFocus.Instructions {
 
         public BahtinovGrabber.BahtinovGrabber.BahtinovCalc BahtinovCalc { get => _bahtinovCalc; set { _bahtinovCalc = value; RaisePropertyChanged(); } }
 
-        public BitmapSource CalcImage { get => _calcImage; set { _calcImage = value; RaisePropertyChanged(); } }
+        public BitmapSource CalcImage { get => _calcImage; set { _calcImage = value; RaisePropertyChanged(); RaisePropertyChanged("IsCalcImageAvailable"); } }
 
         public Rectangle AreaZone { get => _areaZone; set { _areaZone = value; RaisePropertyChanged(); } }
 
@@ -287,6 +296,8 @@ namespace CanardConfit.NINA.BahtiFocus.Instructions {
 
         public BitmapSource AnalysedImage { get => _analysedImage; set { _analysedImage = value; RaisePropertyChanged(); } }
 
+        public bool IsCalcImageAvailable => CalcImage != null;
+        
         public event PropertyChangedEventHandler PropertyChanged;
         protected void RaisePropertyChanged([CallerMemberName] string propertyName = null) {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
