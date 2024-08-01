@@ -109,8 +109,7 @@ namespace CanardConfit.NINA.BahtiFocus.Instructions {
             // Camera
             CameraInfo = _cameraMediator.GetInfo();
             if (!CameraInfo.Connected) {
-                //i.Add(Loc.Instance["LblCameraNotConnected"]);
-                i.Add(BahtiLoc.Instance["LblError"]);
+                i.Add(Loc.Instance["LblCameraNotConnected"]);
             } else {
                 if (CameraInfo.CanSetGain && Gain > -1 && (Gain < CameraInfo.GainMin || Gain > CameraInfo.GainMax)) {
                     i.Add(string.Format(Loc.Instance["Lbl_SequenceItem_Imaging_TakeExposure_Validation_Gain"], CameraInfo.GainMin, CameraInfo.GainMax, Gain));
