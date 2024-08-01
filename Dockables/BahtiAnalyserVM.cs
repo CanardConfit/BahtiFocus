@@ -19,6 +19,8 @@ namespace CanardConfit.NINA.BahtiFocus.Dockables {
     [Export(typeof(IDockableVM))]
     public class BahtiAnalyserVM : DockableVM, ICameraConsumer {
         
+        public const string STATUS_SOURCE = "BF";
+        
         private readonly IApplicationStatusMediator applicationStatusMediator;
         private readonly ICameraMediator cameraMediator;
         private CancellationTokenSource executeCTS;
@@ -35,7 +37,7 @@ namespace CanardConfit.NINA.BahtiFocus.Dockables {
             
             var dict = new ResourceDictionary();
             dict.Source = new Uri("CanardConfit.NINA.BahtiFocus;component/BahtiVisualImage.xaml", UriKind.RelativeOrAbsolute);
-            ImageGeometry = (System.Windows.Media.GeometryGroup) dict["BahtinovSvg"];
+            ImageGeometry = ((System.Windows.Media.GeometryGroup) dict["BahtinovSvg"])!;
             ImageGeometry.Freeze();
 
             BahtiAnalyser = new BahtiAnalyser(profileService, cameraMediator, imagingMediator, fwMediator);
@@ -46,15 +48,21 @@ namespace CanardConfit.NINA.BahtiFocus.Dockables {
                         return await Execute(new Progress<ApplicationStatus>(p => Status = p), executeCTS.Token); 
                     }
                 },
-                _ => BahtiAnalyser.Validate() && cameraMediator.IsFreeToCapture(this));
+                o => BahtiAnalyser.Validate() && cameraMediator.IsFreeToCapture(this));
             
             CancelExecuteCommand = new CommunityToolkit.Mvvm.Input.RelayCommand(() => { try { executeCTS?.Cancel(); } catch (Exception) { } });
             PauseCommand = new CommunityToolkit.Mvvm.Input.RelayCommand(Pause, () => !BahtiAnalyser.IsPausing);
             ResumeCommand = new CommunityToolkit.Mvvm.Input.RelayCommand(Resume);
         }
+
+        private async Task<bool> Execute() {
+            using (executeCTS = new CancellationTokenSource()) {
+                return await Execute(new Progress<ApplicationStatus>(p => Status = p), executeCTS.Token);
+            }
+        }
         
         private ApplicationStatus GetStatus(string stat) {
-            return new ApplicationStatus { Source = "BHTA", Status = stat };
+            return new ApplicationStatus { Source = STATUS_SOURCE, Status = stat };
         }
 
         private void Pause() {
@@ -72,8 +80,7 @@ namespace CanardConfit.NINA.BahtiFocus.Dockables {
                 using (var localCTS = CancellationTokenSource.CreateLinkedTokenSource(token)) {
                     await BahtiAnalyser.Execute(externalProgress, localCTS.Token);
                 }
-            } catch (OperationCanceledException) {
-            } catch (Exception ex) {
+            } catch (OperationCanceledException) {} catch (Exception ex) {
                 Logger.Error(ex);
                 Notification.ShowError(ex.Message);
             } finally {
@@ -91,7 +98,7 @@ namespace CanardConfit.NINA.BahtiFocus.Dockables {
             set {
                 status = value;
                 if (string.IsNullOrWhiteSpace(status.Source)) {
-                    status.Source = "BHTA";
+                    status.Source = STATUS_SOURCE;
                 }
 
                 RaisePropertyChanged();
@@ -100,7 +107,7 @@ namespace CanardConfit.NINA.BahtiFocus.Dockables {
             }
         }
 
-        public IAsyncCommand ExecuteCommand { get; }
+        public AsyncCommand<bool> ExecuteCommand { get; }
         
         public ICommand CancelExecuteCommand { get; }
         

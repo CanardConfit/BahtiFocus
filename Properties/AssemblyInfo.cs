@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // [MANDATORY] The following GUID is used as a unique identifier of the plugin. Generate a fresh one for your plugin!
@@ -15,7 +14,7 @@ using System.Runtime.InteropServices;
 // [MANDATORY] A short description of your plugin
 [assembly: AssemblyDescription("BahtiFocus is a precision Bahtinov mask analyzer integrated into N.I.N.A., designed to help astronomers achieve perfect focus for their telescopes effortlessly.")]
 
-// The following attributes are not required for the plugin per se, but are required by the official manifest meta data
+// The following attributes are not required for the plugin per se, but are required by the official manifest metadata
 
 // Your name
 [assembly: AssemblyCompany("CanardConfit")]
@@ -33,7 +32,7 @@ using System.Runtime.InteropServices;
 // The repository where your pluggin is hosted
 [assembly: AssemblyMetadata("Repository", "https://github.com/CanardConfit/BahtiFocus")]
 
-// The following attributes are optional for the official manifest meta data
+// The following attributes are optional for the official manifest metadata
 
 //[Optional] Your plugin homepage URL - omit if not applicaple
 [assembly: AssemblyMetadata("Homepage", "https://github.com/CanardConfit/BahtiFocus")]
@@ -45,18 +44,19 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyMetadata("ChangelogURL", "https://github.com/CanardConfit/BahtiFocus/CHANGELOG.md")]
 
 //[Optional] The url to a featured logo that will be displayed in the plugin list next to the name
-[assembly: AssemblyMetadata("FeaturedImageURL", "")]
+[assembly: AssemblyMetadata("FeaturedImageURL", "https://github.com/CanardConfit/BahtiFocus/blob/master/logo.png?raw=true")]
 //[Optional] A url to an example screenshot of your plugin in action
-[assembly: AssemblyMetadata("ScreenshotURL", "")]
-//[Optional] An additional url to an example example screenshot of your plugin in action
-[assembly: AssemblyMetadata("AltScreenshotURL", "")]
+[assembly: AssemblyMetadata("ScreenshotURL", "https://github.com/CanardConfit/BahtiFocus/blob/master/BahtiFocus_Working.png?raw=true")]
+//[Optional] An additional url to an example screenshot of your plugin in action
+[assembly: AssemblyMetadata("AltScreenshotURL", "https://github.com/CanardConfit/BahtiFocus/blob/master/BahtiFocus_Start.png?raw=true")]
 //[Optional] An in-depth description of your plugin
-[assembly: AssemblyMetadata("LongDescription", @"BahtiFocus is a precision Bahtinov mask analyzer integrated into N.I.N.A., designed to help astronomers achieve perfect focus for their telescopes effortlessly.")]
+[assembly: AssemblyMetadata("LongDescription", "TODO")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from
 // COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]
+
 // [Unused]
 [assembly: AssemblyConfiguration("")]
 // [Unused]

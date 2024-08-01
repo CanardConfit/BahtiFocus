@@ -18,6 +18,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.Settings</DependentUpon>
     </Compile>
+    <Compile Update="Locale\Locale.fr-FR.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Locale.fr-FR.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Update="Properties\Settings.Settings">
@@ -31,6 +36,15 @@
       <XamlRuntime>Wpf</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Locale\Locale.fr-FR.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Locale.fr-fr.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Locale\Locale.fr-FR.resx">
+      <LastGenOutput>Locale.fr-FR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup />
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
