@@ -46,7 +46,8 @@
 
 ## Bahtinov Mask
 
-<img src="Images%2FBahtinov_mask.png" width="300" height="300" />
+<img src="Images/Bahtinov_mask.png" width="300" height="300" />
+
 A Bahtinov mask is a device used in astrophotography to achieve precise focus on stars or other celestial objects. It is a piece of material with a specific pattern of slots or lines that creates diffraction spikes when placed in front of the telescope's objective lens or primary mirror.
 
 ### What Does it Do to the Photo?
@@ -70,4 +71,4 @@ You can buy a Bahtinov mask from various retailers, such as [Pierro Astro](https
 
 You can also 3D print the Bahtinov mask using PLA plastic or create it using cardboard and a cutter. There are many resources available online to guide you through different methods. A useful website: https://skeye.rocks/tools/mask/
 
-<img src="Images%2Flogo.png" width="400" height="400" />
+<img src="Images/logo.png" width="400" height="400" />
