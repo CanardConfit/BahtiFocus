@@ -25,7 +25,9 @@
 
 - Install the plugin automatically with the N.I.N.A plugin manager or manually place the DLL file into `%localappdata%\NINA\Plugins`.
     - A new panel will appear in the `Imaging` tab called `Bahtinov Analyser`.
+
 ![BahtiFocus_Start](Images/BahtiFocus_Start.png)
+
 - Create or purchase a Bahtinov mask for your instrument (see [Bahtinov section](#bahtinov-mask)).
 - Connect your camera to N.I.N.A.
 - Choose, slew, and center a star in your camera's view.
@@ -36,13 +38,15 @@
 - Press the start button to begin the exposure.
 - After the first photo is taken and appears on the right, you will see a rectangle on the right side of the screen.
     - The rectangle indicates the area analyzed on the left. You can move or zoom it using the controls at the bottom to center it on the star.
+
 ![BahtiFocus_Working.png](Images%2FBahtiFocus_Working.png)
+
 - The analysis will continue automatically, and you can adjust the focus of your instrument to find the critical focus.
 - Once the critical focus is achieved, you can stop the process and remove the Bahtinov mask!
 
 ## Bahtinov Mask
 
-![Bahtinov mask example](Images%2FBahtinov_mask.png)
+<img src="Images%2FBahtinov_mask.png" width="300" height="300" />
 A Bahtinov mask is a device used in astrophotography to achieve precise focus on stars or other celestial objects. It is a piece of material with a specific pattern of slots or lines that creates diffraction spikes when placed in front of the telescope's objective lens or primary mirror.
 
 ### What Does it Do to the Photo?
@@ -66,4 +70,4 @@ You can buy a Bahtinov mask from various retailers, such as [Pierro Astro](https
 
 You can also 3D print the Bahtinov mask using PLA plastic or create it using cardboard and a cutter. There are many resources available online to guide you through different methods. A useful website: https://skeye.rocks/tools/mask/
 
-<img src="logo.png" width="400" height="400" />
+<img src="Images%2Flogo.png" width="400" height="400" />
